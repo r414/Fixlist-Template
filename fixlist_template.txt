@@ -1,0 +1,56 @@
+Start::
+SystemRestore: On
+CreateRestorePoint:
+CloseProcesses:
+
+
+
+(Script)
+
+
+
+C:\Users\CurrentUserName\AppData\Local\Temp\*
+StartPowershell:
+Function Remove-all-windefend-excludes {
+$Paths=(Get-MpPreference).ExclusionPath
+$Extensions=(Get-MpPreference).ExclusionExtension
+$Processes=(Get-MpPreference).ExclusionProcess
+foreach ($Path in $Paths) { Remove-MpPreference -ExclusionPath $Path -force}
+foreach ($Extension in $Extensions) { Remove-MpPreference -ExclusionExtension $Extension -force}
+foreach ($Process in $Processes) { Remove-MpPreference -ExclusionProcess $Process -force}
+}
+Get-MpPreference
+Remove-all-windefend-excludes
+Set-MpPreference -DisableAutoExclusions $true -Force
+Set-MpPreference -OnAccessProtectionEnabled $True
+Set-MpPreference -RealTimeProtectionEnabled $True
+Set-MpPreference -AMRunningMode $Normal
+Set-MpPreference -PUAProtection Enabled
+Get-MpPreference
+EndPowershell:C:\ProgramData\Microsoft\Windows Defender\Scans\History\Service\DetectionHistory
+C:\ProgramData\Microsoft\Windows Defender\Scans\History\Service\*.*
+C:\Windows\SoftwareDistribution\Download\*
+C:\Windows\SoftwareDistribution\DataStore\*
+Hosts:
+RemoveProxy:
+CMD: cscript c:\windows\system32\slmgr.vbs /xpr & cscript c:\windows\system32\slmgr.vbs /dlv
+CMD: netsh int ip reset
+CMD: ipconfig /flushDNS
+CMD: netsh advfirewall reset
+CMD: netsh advfirewall set allprofiles state ON
+CMD: netsh winhttp reset proxy
+CMD: netsh winsock reset catalog
+CMD: "%WINDIR%\SYSTEM32\lodctr.exe" /R
+CMD: "%WINDIR%\SysWOW64\lodctr.exe" /R
+CMD: "C:\Windows\SYSTEM32\lodctr.exe" /R
+CMD: "C:\Windows\SysWOW64\lodctr.exe" /R
+CMD: bitsadmin /reset /allusers
+CMD: Winmgmt /salvagerepository
+CMD: Winmgmt /resetrepository
+CMD: winmgmt /resyncperf
+CMD: DISM.exe /Online /Cleanup-image /Restorehealth
+CMD: sfc /scannow
+CMD: DISM.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
+EmptyEventLogs:
+Emptytemp:
+End::
