@@ -5,10 +5,6 @@ CloseProcesses:
 
 
 
-(Script)
-
-
-
 C:\Users\CurrentUserName\AppData\Local\Temp\*
 StartPowershell:
 Function Remove-all-windefend-excludes {
